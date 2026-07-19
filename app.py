@@ -94,9 +94,10 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
     font-weight: 600;
     font-size: 1.2rem;
     color: #fff;
-    margin-bottom: 0.4rem;
+    margin: 0 0 0.4rem 0;
+    line-height: 1.3;
 }
-.section-sub { color: #83849a; font-size: 0.88rem; margin-bottom: 1rem; }
+.section-sub { color: #83849a; font-size: 0.88rem; margin: 0 0 1.4rem 0; }
 
 label, .stSelectbox label, .stSlider label {
     color: #d8d9e6 !important;
@@ -114,10 +115,19 @@ label, .stSelectbox label, .stSlider label {
 
 /* give the filter row a bit more breathing room so labels never crowd the edge */
 div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stHorizontalBlock"] {
-    gap: 1.2rem;
+    gap: 1.4rem;
 }
 div[data-testid="stVerticalBlockBorderWrapper"] {
-    padding: 0.5rem 0.5rem !important;
+    padding: 1.5rem 1.5rem !important;
+}
+.st-key-filter_panel div[data-testid="stVerticalBlockBorderWrapper"],
+div[data-testid="stVerticalBlockBorderWrapper"].st-key-filter_panel {
+    padding: 1.9rem 2.1rem !important;
+}
+[class*="st-key-movie_card_"] div[data-testid="stVerticalBlockBorderWrapper"],
+div[data-testid="stVerticalBlockBorderWrapper"][class*="st-key-movie_card_"] {
+    padding: 1.1rem 1.1rem 1.4rem 1.1rem !important;
+    height: 100%;
 }
 
 div[data-baseweb="select"] > div {
@@ -131,8 +141,10 @@ div[data-baseweb="select"] > div {
 .stSlider [role="slider"] { background: #fff !important; box-shadow: 0 0 0 4px rgba(255,60,111,0.25) !important; }
 
 /* ================= CTA BUTTON ================= */
+div[data-testid="stButton"] { width: 100%; }
+div[data-testid="stButton"] > button,
 .stButton > button {
-    width: 100%;
+    width: 100% !important;
     background: linear-gradient(90deg, #ffb84c, #ff3c6f 55%, #a855f7);
     color: white !important;
     font-family: 'Poppins', sans-serif;
@@ -146,7 +158,9 @@ div[data-baseweb="select"] > div {
     transition: all 0.25s ease;
     letter-spacing: 0.3px;
 }
+div[data-testid="stButton"] > button:hover,
 .stButton > button:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 12px 32px rgba(255, 60, 111, 0.5); color: white !important; }
+div[data-testid="stButton"] > button:active,
 .stButton > button:active { transform: translateY(0px) scale(0.99); }
 
 /* ================= MOVIE CARDS ================= */
@@ -175,6 +189,10 @@ div[data-testid="stVerticalBlockBorderWrapper"]:hover .movie-poster-img img { tr
     margin: 0.7rem 0 0.15rem 0;
     line-height: 1.3;
     min-height: 2.7em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 .movie-year { color: #83849a; font-size: 0.85rem; font-weight: 500; }
 .rating-badge {
@@ -191,8 +209,11 @@ div[data-testid="stVerticalBlockBorderWrapper"]:hover .movie-poster-img img { tr
     color: #a9aabc;
     font-size: 0.85rem;
     line-height: 1.5;
-    max-height: 6.4em;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
     overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 div[data-testid="stAlert"] { border-radius: 14px !important; backdrop-filter: blur(10px); }
@@ -251,7 +272,7 @@ GENRE_EMOJI = {
 # USER INPUT PANEL — real st.container so CSS actually wraps it
 # ============================================================
 st.write("")
-with st.container(border=True):
+with st.container(border=True, key="filter_panel"):
     st.markdown('<div class="section-label">🎯 Select Your Preferences</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-sub">Fine-tune the filters below to match your mood.</div>', unsafe_allow_html=True)
 
@@ -302,7 +323,7 @@ if find_clicked:
                 st.success(f"✨ Here are your top {len(recommendations)} recommendations:")
 
                 cols = st.columns(len(recommendations))
-                for col, movie in zip(cols, recommendations):
+                for idx, (col, movie) in enumerate(zip(cols, recommendations)):
                     title = movie.get('title', 'Unknown Title')
                     overview = movie.get('overview', 'No synopsis available.')
                     release_date = movie.get('release_date', 'Unknown Date')
@@ -311,7 +332,7 @@ if find_clicked:
                     year_str = release_date[:4] if release_date and release_date != "Unknown Date" else "N/A"
 
                     with col:
-                        with st.container(border=True):
+                        with st.container(border=True, key=f"movie_card_{idx}"):
                             st.markdown('<div class="movie-poster-img">', unsafe_allow_html=True)
                             if poster_path:
                                 poster_url = f"https://image.tmdb.org/t/p/w300{poster_path}"
@@ -331,4 +352,4 @@ if find_clicked:
         except requests.exceptions.RequestException as e:
             st.error(f"An error occurred while connecting to TMDB: {e}")
 
-st.markdown('<div class="footer-credit">Made by Raman Manish Gulhane · Data from The Movie Database (TMDB)</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer-credit">Made with ❤️ by Raman Manish Gulhane · Data from The Movie Database (TMDB)</div>', unsafe_allow_html=True)
