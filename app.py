@@ -331,4 +331,4 @@ if find_clicked:
         except requests.exceptions.RequestException as e:
             st.error(f"An error occurred while connecting to TMDB: {e}")
 
-st.markdown('<div class="footer-credit">Made with 🍿 · Data from The Movie Database (TMDB)</div>', unsafe_allow_html=True)
+st.markdown('<div class="footer-credit">Made by Raman Manish Gulhane · Data from The Movie Database (TMDB)</div>', unsafe_allow_html=True)
